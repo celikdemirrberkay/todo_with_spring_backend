@@ -6,7 +6,7 @@ enum Messages {
     DELETED("Todo successfully deleted !"),
     UPDATED("Todo successfully updated !");
 
-    private String message;
+    private final String message;
 
     Messages(String message){
         this.message = message;
