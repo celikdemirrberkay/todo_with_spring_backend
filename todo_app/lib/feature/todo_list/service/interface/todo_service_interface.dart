@@ -10,14 +10,14 @@ abstract class TodoServiceInterface {
   final Dio dio;
 
   /// Get `todo` list
-  Future<List<Todo>>? getTodoList();
+  Future<List<Todo>?> getTodoList();
 
   /// Add `todo` to db
-  Future<String>? addTodo(Todo todo);
+  Future<String?> addTodo(Todo todo);
 
   /// Update `todo` in db
-  Future<String>? updateTodo(Todo todo);
+  Future<String?> updateTodo(Todo todo);
 
   /// Delete `todo` by id
-  Future<String>? deleteTodoById(Todo todo);
+  Future<String?> deleteTodoById(Todo todo);
 }

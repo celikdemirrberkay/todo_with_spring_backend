@@ -12,7 +12,7 @@ class TodoService extends TodoServiceInterface {
 
   /// ------------ Add `todo` to db ------------
   @override
-  Future<String>? addTodo(Todo todo) async {
+  Future<String?> addTodo(Todo todo) async {
     /// Try post data
     try {
       /// Post data
@@ -27,52 +27,78 @@ class TodoService extends TodoServiceInterface {
       }
 
       /// Catch error
-    } on DioException catch (error) {
-      return error.message ?? 'Error occured';
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        return e.response?.data as String?;
+      } else {
+        return 'Unexpected error occured';
+      }
+    } catch (e) {
+      return 'Unexpected error occured';
     }
   }
 
   /// ------------ Delete `todo` from db ------------
   @override
-  Future<String>? deleteTodoById(Todo todo) async {
+  Future<String?> deleteTodoById(Todo todo) async {
     try {
       final response = await dio.delete<String>(
         '${DevEnvironment.baseUrl}/delete/${todo.id}',
       );
       return response.data!;
     } on DioException catch (e) {
-      return e.message ?? 'Error occured';
+      if (e.response != null && e.response?.data != null) {
+        return e.response?.data as String?;
+      } else {
+        return 'Unexpected error occured';
+      }
+    } catch (e) {
+      return 'Unexpected error occured';
     }
   }
 
   /// ------------ Fetch all `todo` from db ------------
   @override
-  Future<List<Todo>>? getTodoList() async {
+  Future<List<Todo>?> getTodoList() async {
     try {
-      final response = await dio.get<List<Map<String, dynamic>>>(
+      /// Get response
+      final response = await dio.get<List<dynamic>?>(
         '${DevEnvironment.baseUrl}/todos',
       );
 
-      /// Return list of `todo` map
-      return response.data!.map((e) => Todo.fromJson(e)).toList();
+      final dataList = response.data;
+      if (dataList != null) {
+        final todoListAsMap = dataList.map((item) => item as Map<String, dynamic>).toList();
+
+        /// Return list of `todo` map
+        return todoListAsMap.map(Todo.fromJson).toList();
+      }
+
+      return null;
 
       /// Catch error
     } on DioException catch (_) {
-      return <Todo>[];
+      return null;
     }
   }
 
   /// ------------ Update `todo` to db ------------
   @override
-  Future<String>? updateTodo(Todo todo) async {
+  Future<String?> updateTodo(Todo todo) async {
     try {
-      final response = await dio.put<String>(
+      final response = await dio.put<String?>(
         '${DevEnvironment.baseUrl}/update/${todo.id}',
         data: todo.toJson(),
       );
-      return response.data!;
+      return response.data;
     } on DioException catch (e) {
-      return e.message ?? 'Error occured';
+      if (e.response != null && e.response?.data != null) {
+        return e.response?.data as String?;
+      } else {
+        return 'Unexpected error occured';
+      }
+    } catch (e) {
+      return 'Unexpected error occured';
     }
   }
 }
